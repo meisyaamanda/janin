@@ -4,6 +4,7 @@ class UserModel{
   final String email;
   final String password;
   final String no;
+  final String? image;
 
   UserModel({
     this.id,
@@ -11,6 +12,7 @@ class UserModel{
     required this.email,
     required this.password,
     required this.no,
+    this.image,
   });
 
   toJson(){
@@ -19,6 +21,7 @@ class UserModel{
       "emailController" : email,
       "passwordController" : password,
       "noController" : no,
+      "image":image,
     };
   }
 }

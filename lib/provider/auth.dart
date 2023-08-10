@@ -122,13 +122,14 @@ class Auth with ChangeNotifier {
     db.collection("users").doc(user!.uid).set(userData);
   }
 
-  updateDetailsToFirestore(String email, String nama, String no, context) {
+  updateDetailsToFirestore(String email, String nama, String no,String image, context) {
     User? user = FirebaseAuth.instance.currentUser;
     FirebaseFirestore db = FirebaseFirestore.instance;
     final userData = <String, dynamic>{
       "namaController": nama,
       "emailController": email,
       "noController": no,
+      "image":image,
     };
     db.collection("users").doc(user!.uid).update(userData);
     showTextMessage(context, 'Akun berhasil diupdate');

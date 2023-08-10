@@ -47,8 +47,9 @@ class _PrediksiFormState extends State<PrediksiForm> {
     );
 
     if (response.statusCode == 200) {
-      final prediksiProvider =
+      PrediksiProvider prediksiProvider =
           Provider.of<PrediksiProvider>(context, listen: false);
+          
       final responseData = jsonDecode(response.body);
       setState(() {
         prediksiProvider.setResult(

@@ -18,7 +18,7 @@ class _NavbarState extends State<Navbar> {
   List<dynamic> screens = [
   Beranda(),
   Tips(),
-  const Riwayat(),
+  Riwayat(),
   const Profil(),
   ];
 

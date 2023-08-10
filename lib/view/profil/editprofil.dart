@@ -1,4 +1,8 @@
+import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:janin/provider/auth.dart';
 import 'package:provider/provider.dart';
 import '../../theme.dart';
@@ -23,6 +27,32 @@ class _EditProfilState extends State<EditProfil> {
   TextEditingController namaUController = TextEditingController();
   TextEditingController noUController = TextEditingController();
   TextEditingController emailUController = TextEditingController();
+  XFile? pickedimage;
+  File? fileimage;
+
+  Future<void> pickImageCamera() async {
+    final XFile? pickerImageCamera =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+    if (pickerImageCamera != null) {
+      final File fileImage = File(pickerImageCamera.path);
+      setState(() {
+        pickedimage = pickerImageCamera;
+        fileimage = fileImage;
+      });
+    }
+  }
+
+  Future<void> pickImageGallery() async {
+    final XFile? pickerImageGallery =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickerImageGallery != null) {
+      final File fileImage = File(pickerImageGallery.path);
+      setState(() {
+        pickedimage = pickerImageGallery;
+        fileimage = fileImage;
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -35,6 +65,32 @@ class _EditProfilState extends State<EditProfil> {
   @override
   Widget build(BuildContext context) {
     Auth auth = Provider.of<Auth>(context, listen: false);
+    void bottomSheet() {
+      showModalBottomSheet(
+          context: context,
+          builder: (BuildContext context) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: Icon(Icons.camera),
+                  title: const Text("Camera"),
+                  onTap: () {
+                    pickImageCamera();
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.filter),
+                  title: const Text("Gallery"),
+                  onTap: () {
+                    pickImageGallery();
+                  },
+                ),
+              ],
+            );
+          });
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -69,15 +125,16 @@ class _EditProfilState extends State<EditProfil> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
-                          image: NetworkImage(
-                              'https://googleflutter.com/sample_image.jpg'),
+                          image: FileImage(fileimage!),
                           fit: BoxFit.fill,
                         ),
                       ),
                     ),
                     Positioned(
                       child: IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          bottomSheet();
+                        },
                         icon: Icon(
                           Icons.add_a_photo,
                           size: 40,
@@ -170,11 +227,20 @@ class _EditProfilState extends State<EditProfil> {
                         ),
                         backgroundColor: pinkColor,
                       ),
-                      onPressed: () {
+                      onPressed: () async {
+                        var imageName =
+                            DateTime.now().millisecondsSinceEpoch.toString();
+                        var storageRef = FirebaseStorage.instance
+                            .ref()
+                            .child('profil/$imageName.jpg');
+                        var uploadTask = storageRef.putFile(fileimage!);
+                        var downloadUrl =
+                            await (await uploadTask).ref.getDownloadURL();
                         auth.updateDetailsToFirestore(
                           emailUController.text,
                           namaUController.text,
                           noUController.text,
+                          downloadUrl,
                           context,
                         );
                         Navigator.pop(context);
