@@ -1,6 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:janin/provider/prediksi.dart';
+import 'package:janin/view/home/navbar.dart';
+import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../theme.dart';
 
 class PrediksiForm extends StatefulWidget {
@@ -43,9 +47,22 @@ class _PrediksiFormState extends State<PrediksiForm> {
     );
 
     if (response.statusCode == 200) {
+      final prediksiProvider =
+          Provider.of<PrediksiProvider>(context, listen: false);
       final responseData = jsonDecode(response.body);
       setState(() {
-        result = responseData['result'] == 1 ? 'Normal' : 'Abnormal';
+        prediksiProvider.setResult(
+          responseData['result'] == 1
+              ? 'Janin anda dalam keadaan normal \n\v'
+                  'Status Kesehatan : Normal'
+              : 'Pasien harus segera istirahat\n\v'
+                  'Status Kesehatan : Kurang Baik',
+        );
+        // firestore
+        FirebaseFirestore.instance.collection('hasil_prediksi').add({
+          'result': prediksiProvider.result,
+          'timestamp': FieldValue.serverTimestamp(),
+        });
       });
     } else {
       setState(() {
@@ -69,7 +86,10 @@ class _PrediksiFormState extends State<PrediksiForm> {
             color: blackColor,
           ),
         ),
-        title: Text('Buat Prediksi', style: appBarStyle,),
+        title: Text(
+          'Prediksi Janin',
+          style: appBarStyle,
+        ),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -77,66 +97,387 @@ class _PrediksiFormState extends State<PrediksiForm> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            TextField(
+            Row(
+              children: [
+                Text(
+                  'Acceleration',
+                  style: labelText,
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Tooltip(
+                  message: 'Jumlah percepatan denyut jantung janin perdetik.',
+                  child: Container(
+                    height: 20,
+                    width: 20,
+                    child: Icon(
+                      Icons.info_outline,
+                      color: pinkColor,
+                    ),
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            TextFormField(
+              keyboardType: TextInputType.number,
+              textInputAction: TextInputAction.next,
               controller: accelerationsController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                hintText: 'Masukan nilai akselerasi',
+                hintStyle: greyTextStyle.copyWith(fontSize: 14),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: [
+                Text(
+                  'Fetal Movement',
+                  style: labelText,
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Tooltip(
+                  message: 'Jumlah pergerakan fisik janin perdetik.',
+                  child: Container(
+                    height: 20,
+                    width: 20,
+                    child: Icon(
+                      Icons.info_outline,
+                      color: pinkColor,
+                    ),
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            TextFormField(
               keyboardType: TextInputType.number,
               textInputAction: TextInputAction.next,
-              decoration: InputDecoration(labelText: 'Accelerations'),
-            ),
-            TextField(
               controller: movementController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                hintText: 'Masukkan nilai movement',
+                hintStyle: greyTextStyle.copyWith(fontSize: 14),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: [
+                Text(
+                  'Uterine Contractions',
+                  style: labelText,
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Tooltip(
+                  message: 'Jumlah kontraksi rahim perdetik',
+                  child: Container(
+                    height: 20,
+                    width: 20,
+                    child: Icon(
+                      Icons.info_outline,
+                      color: pinkColor,
+                    ),
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            TextFormField(
               keyboardType: TextInputType.number,
               textInputAction: TextInputAction.next,
-              decoration: InputDecoration(labelText: 'Movement'),
-            ),
-            TextField(
               controller: uterineController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                hintText: 'Masukkan nilai uterine',
+                hintStyle: greyTextStyle.copyWith(fontSize: 14),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: [
+                Text(
+                  'Light Decelerations',
+                  style: labelText,
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Tooltip(
+                  message:
+                      'Jumlah penurunan singkat denyut jantung rahim perdetik.',
+                  child: Container(
+                    height: 20,
+                    width: 20,
+                    child: Icon(
+                      Icons.info_outline,
+                      color: pinkColor,
+                    ),
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            TextFormField(
               keyboardType: TextInputType.number,
               textInputAction: TextInputAction.next,
-              decoration: InputDecoration(labelText: 'Uterine'),
-            ),
-            TextField(
               controller: lightController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                hintText: 'Jumlah penurunan singkat denyut jantung rahim',
+                hintStyle: greyTextStyle.copyWith(fontSize: 14),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: [
+                Text(
+                  'Severe Decelerations',
+                  style: labelText,
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Tooltip(
+                  message:
+                      'Jumlah penurunan yang signifikan dalam denyut jantung janin perdetik.',
+                  child: Container(
+                    height: 20,
+                    width: 20,
+                    child: Icon(
+                      Icons.info_outline,
+                      color: pinkColor,
+                    ),
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            TextFormField(
               keyboardType: TextInputType.number,
               textInputAction: TextInputAction.next,
-              decoration: InputDecoration(labelText: 'Light'),
-            ),
-            TextField(
               controller: severeController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                hintText:
+                    'Jumlah penurunan yang signifikan dalam denyut jantung rahim',
+                hintStyle: greyTextStyle.copyWith(fontSize: 14),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: [
+                Text(
+                  'Prolongued Decelerations',
+                  style: labelText,
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Tooltip(
+                  message:
+                      'Jumlah penurunan yang lebih lama dalam denyut jantung janin perdetik.',
+                  child: Container(
+                    height: 20,
+                    width: 20,
+                    child: Icon(
+                      Icons.info_outline,
+                      color: pinkColor,
+                    ),
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            TextFormField(
               keyboardType: TextInputType.number,
               textInputAction: TextInputAction.next,
-              decoration: InputDecoration(labelText: 'Severe'),
-            ),
-            TextField(
               controller: prolonguedController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                hintText:
+                    'Jumlah penurunan yang lebih lama dalam denyut jantung janin',
+                hintStyle: greyTextStyle.copyWith(fontSize: 14),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: [
+                Text(
+                  'Abnormal Short Term',
+                  style: labelText,
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Tooltip(
+                  message:
+                      'Persentase waktu dalam interval antara denyut jantung janin yang terjadi secara singkat.',
+                  child: Container(
+                    height: 20,
+                    width: 20,
+                    child: Icon(
+                      Icons.info_outline,
+                      color: pinkColor,
+                    ),
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            TextFormField(
               keyboardType: TextInputType.number,
               textInputAction: TextInputAction.next,
-              decoration: InputDecoration(labelText: 'prolongued'),
-            ),
-            TextField(
               controller: abnormalController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                hintText:
+                    'Persentase waktu dalam interval antara denyut jantung',
+                hintStyle: greyTextStyle.copyWith(fontSize: 14),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: [
+                Text(
+                  'Percentage of time',
+                  style: labelText,
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Tooltip(
+                  message:
+                      'Persentase waktu dalam interval antara denyut jantung janin yang terjadi dalam jangka waktu panjang.',
+                  child: Container(
+                    height: 20,
+                    width: 20,
+                    child: Icon(
+                      Icons.info_outline,
+                      color: pinkColor,
+                    ),
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            TextFormField(
               keyboardType: TextInputType.number,
               textInputAction: TextInputAction.next,
-              decoration: InputDecoration(labelText: 'abnormal'),
-            ),
-            TextField(
               controller: percentageController,
-              keyboardType: TextInputType.number,
-              textInputAction: TextInputAction.done,
-              decoration: InputDecoration(labelText: 'percentage'),
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                hintText: 'Persentasi waktu dalam jangka panjang',
+                hintStyle: greyTextStyle.copyWith(fontSize: 14),
+              ),
             ),
             // Tambahkan TextField lain untuk atribut lainnya
             SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: predictJanin,
-              child: Text('Predict'),
+            Center(
+              child: Container(
+                width: 277,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    backgroundColor: pinkColor,
+                  ),
+                  onPressed: () {
+                    predictJanin();
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          final prediksiProvider =
+                              Provider.of<PrediksiProvider>(context,
+                                  listen: false);
+                          return AlertDialog(
+                            title: Text('Hasil Prediksi'),
+                            content: Text(
+                              prediksiProvider.result,
+                            ),
+                            actions: [
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: pinkColor,
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Navbar(),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  'Baik',
+                                  style: TextStyle(
+                                    color: blackColor,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        });
+                  },
+                  child: Text(
+                    'Prediksi',
+                    style: buttonText,
+                  ),
+                ),
+              ),
             ),
-            SizedBox(height: 16),
-            Text(
-              'Hasil Prediksi:',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text(result),
           ],
         ),
       ),

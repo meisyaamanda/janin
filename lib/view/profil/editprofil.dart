@@ -61,20 +61,32 @@ class _EditProfilState extends State<EditProfil> {
           child: Column(
             children: [
               Center(
-                child: InkWell(
-                  onTap: () {},
-                  child: Container(
-                    height: 200,
-                    width: 200,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: NetworkImage(
-                            'https://googleflutter.com/sample_image.jpg'),
-                        fit: BoxFit.fill,
+                child: Stack(
+                  children: [
+                    Container(
+                      height: 200,
+                      width: 200,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: NetworkImage(
+                              'https://googleflutter.com/sample_image.jpg'),
+                          fit: BoxFit.fill,
+                        ),
                       ),
                     ),
-                  ),
+                    Positioned(
+                      child: IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.add_a_photo,
+                          size: 40,
+                        ),
+                      ),
+                      left: 140,
+                      bottom: 7,
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(

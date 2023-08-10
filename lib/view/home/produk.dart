@@ -41,37 +41,37 @@ class Produk extends StatelessWidget {
                 return Stack(
                   children: [
                     GridView.builder(
-                    scrollDirection: Axis.vertical,
-                    itemCount: data.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                      childAspectRatio: 0.9,
-                      mainAxisExtent: 270,
+                      scrollDirection: Axis.vertical,
+                      itemCount: data.length,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 10,
+                        crossAxisSpacing: 10,
+                        childAspectRatio: 0.9,
+                        mainAxisExtent: 290,
+                      ),
+                      itemBuilder: (context, index) {
+                        final dataProduk =
+                            data[index].data() as Map<String, dynamic>;
+                        return ProdukCard(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (contex) =>
+                                    ProdukDetail(idDoc: data[index].id),
+                              ),
+                            );
+                          },
+                          produkModel: ProdukModel(
+                            nama: dataProduk['nama'],
+                            logo: dataProduk['logo'],
+                            kategori: dataProduk['kategori'],
+                            rate: dataProduk['rate'],
+                          ),
+                        );
+                      },
                     ),
-                    itemBuilder: (context, index) {
-                      final dataProduk =
-                          data[index].data() as Map<String, dynamic>;
-                      return ProdukCard(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (contex) =>
-                                  ProdukDetail(idDoc: data[index].id),
-                            ),
-                          );
-                        },
-                        produkModel: ProdukModel(
-                          nama: dataProduk['nama'],
-                          logo: dataProduk['logo'],
-                          kategori: dataProduk['kategori'],
-                          rate: dataProduk['rate'],
-                        ),
-                      );
-                    },
-                  ),
                   ],
                 );
               } else {

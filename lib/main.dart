@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:janin/provider/auth.dart';
 import 'package:janin/provider/iconkatasandi.dart';
 import 'package:janin/provider/navbarprovider.dart';
-import 'package:janin/view/home/widget/produkcard.dart';
-import 'package:janin/view/signin/konfirmasi.dart';
+import 'package:janin/provider/prediksi.dart';
 import 'package:janin/view/signin/wrapper.dart';
-import 'package:janin/view/splashscreen.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -31,6 +29,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => NavbarProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => PrediksiProvider(),
         ),
       ],
       child: const MaterialApp(
