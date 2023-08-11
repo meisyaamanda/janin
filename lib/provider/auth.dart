@@ -71,7 +71,7 @@ class Auth with ChangeNotifier {
         password: password,
       );
       await user.user!.sendEmailVerification();
-      showTextMessage(context, 'Akun berhasil dibuat');
+      showTextMessage(context, 'Mohon cek email anda \n \v Akun berhasil dibuat');
       postDetailsToFirestore(email, nama, no, context);
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
@@ -122,7 +122,7 @@ class Auth with ChangeNotifier {
     db.collection("users").doc(user!.uid).set(userData);
   }
 
-  updateDetailsToFirestore(String email, String nama, String no,String image, context) {
+  updateDetailsToFirestore(String email, String nama, String no, String image, context) {
     User? user = FirebaseAuth.instance.currentUser;
     FirebaseFirestore db = FirebaseFirestore.instance;
     final userData = <String, dynamic>{

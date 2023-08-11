@@ -39,18 +39,42 @@ class _ProfilState extends State<Profil> {
             const SizedBox(
               height: 20,
             ),
-            Center(
-              child: Container(
-                width: 200,
-                height: 200,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                      image: NetworkImage(
-                          'https://googleflutter.com/sample_image.jpg'),
-                      fit: BoxFit.fill),
-                ),
-              ),
+            StreamBuilder<QuerySnapshot<Object?>>(
+              stream: berandaService.streamUsers(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.active){
+                  var data = snapshot.data!.docs;
+                  final dataUsers = data[0].data() as Map<String, dynamic>;
+                  return Center(
+                  child: Container(
+                    width: 200,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: NetworkImage(dataUsers['image'],),
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                  ),
+                );
+                } else {
+                  return Center(
+                  child: Container(
+                    width: 200,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: NetworkImage(
+                            "https://assets.pikiran-rakyat.com/crop/0x0:0x0/x/photo/2022/04/16/2717764595.jpeg"),
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                  ),
+                );
+                }
+              }
             ),
             const SizedBox(
               height: 10,
@@ -85,6 +109,7 @@ class _ProfilState extends State<Profil> {
                               email: dataUsers['emailController'],
                               nama: dataUsers['namaController'],
                               no: dataUsers['noController'],
+                              image: dataUsers['image'],
                             ),
                           ),
                         );

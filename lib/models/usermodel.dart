@@ -21,7 +21,7 @@ class UserModel{
       "emailController" : email,
       "passwordController" : password,
       "noController" : no,
-      "image":image,
+      // "image":image,
     };
   }
 }

@@ -13,10 +13,12 @@ class EditProfil extends StatefulWidget {
     required this.nama,
     required this.email,
     required this.no,
+    this.image,
   });
   final String nama;
   final String email;
   final String no;
+  final String? image;
 
   @override
   State<EditProfil> createState() => _EditProfilState();
@@ -119,6 +121,7 @@ class _EditProfilState extends State<EditProfil> {
               Center(
                 child: Stack(
                   children: [
+                    fileimage != null ?
                     Container(
                       height: 200,
                       width: 200,
@@ -126,6 +129,18 @@ class _EditProfilState extends State<EditProfil> {
                         shape: BoxShape.circle,
                         image: DecorationImage(
                           image: FileImage(fileimage!),
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                    ) 
+                    :
+                    Container(
+                      height: 200,
+                      width: 200,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: NetworkImage("https://assets.pikiran-rakyat.com/crop/0x0:0x0/x/photo/2022/04/16/2717764595.jpeg"),
                           fit: BoxFit.fill,
                         ),
                       ),
