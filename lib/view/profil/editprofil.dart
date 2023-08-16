@@ -69,28 +69,29 @@ class _EditProfilState extends State<EditProfil> {
     Auth auth = Provider.of<Auth>(context, listen: false);
     void bottomSheet() {
       showModalBottomSheet(
-          context: context,
-          builder: (BuildContext context) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  leading: Icon(Icons.camera),
-                  title: const Text("Camera"),
-                  onTap: () {
-                    pickImageCamera();
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.filter),
-                  title: const Text("Gallery"),
-                  onTap: () {
-                    pickImageGallery();
-                  },
-                ),
-              ],
-            );
-          });
+        context: context,
+        builder: (BuildContext context) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.camera),
+                title: const Text("Camera"),
+                onTap: () {
+                  pickImageCamera();
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.filter),
+                title: const Text("Gallery"),
+                onTap: () {
+                  pickImageGallery();
+                },
+              ),
+            ],
+          );
+        },
+      );
     }
 
     return Scaffold(
@@ -121,30 +122,30 @@ class _EditProfilState extends State<EditProfil> {
               Center(
                 child: Stack(
                   children: [
-                    fileimage != null ?
-                    Container(
-                      height: 200,
-                      width: 200,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: FileImage(fileimage!),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                    ) 
-                    :
-                    Container(
-                      height: 200,
-                      width: 200,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: NetworkImage("https://assets.pikiran-rakyat.com/crop/0x0:0x0/x/photo/2022/04/16/2717764595.jpeg"),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                    ),
+                    fileimage != null
+                        ? Container(
+                            height: 200,
+                            width: 200,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: FileImage(fileimage!),
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          )
+                        : Container(
+                            height: 200,
+                            width: 200,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: NetworkImage(
+                                    "https://assets.pikiran-rakyat.com/crop/0x0:0x0/x/photo/2022/04/16/2717764595.jpeg"),
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          ),
                     Positioned(
                       child: IconButton(
                         onPressed: () {

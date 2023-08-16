@@ -7,8 +7,10 @@ import 'package:janin/view/home/navbar.dart';
 import 'package:janin/view/profil/profil.dart';
 import 'package:janin/view/signin/signin.dart';
 import 'package:janin/view/signin/snackbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth with ChangeNotifier {
+  String id = "";
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore db = FirebaseFirestore.instance;
 
@@ -42,13 +44,22 @@ class Auth with ChangeNotifier {
         email: email,
         password: password,
       );
-      if(user.user!.emailVerified){
+      id = user.user!.uid;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString("uid", id);
+      final result = await prefs.getString("uid");
+      print('hasil: $result');
+
+      // final SharedPreferences prefs = await _prefs;
+      // await prefs.setString("uid",id);
+      print("jalan");
+      if (user.user!.emailVerified) {
         Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => Navbar(),
-        ),
-      );
+          context,
+          MaterialPageRoute(
+            builder: (context) => Navbar(),
+          ),
+        );
       } else {
         showTextMessage(context, "Anda Perlu Verifikasi Email Terlebih Dahulu");
       }
@@ -71,7 +82,8 @@ class Auth with ChangeNotifier {
         password: password,
       );
       await user.user!.sendEmailVerification();
-      showTextMessage(context, 'Mohon cek email anda \n \v Akun berhasil dibuat');
+      showTextMessage(
+          context, 'Mohon cek email anda \n \v Akun berhasil dibuat');
       postDetailsToFirestore(email, nama, no, context);
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
@@ -122,14 +134,15 @@ class Auth with ChangeNotifier {
     db.collection("users").doc(user!.uid).set(userData);
   }
 
-  updateDetailsToFirestore(String email, String nama, String no, String image, context) {
+  updateDetailsToFirestore(
+      String email, String nama, String no, String image, context) {
     User? user = FirebaseAuth.instance.currentUser;
     FirebaseFirestore db = FirebaseFirestore.instance;
     final userData = <String, dynamic>{
       "namaController": nama,
       "emailController": email,
       "noController": no,
-      "image":image,
+      "image": image,
     };
     db.collection("users").doc(user!.uid).update(userData);
     showTextMessage(context, 'Akun berhasil diupdate');

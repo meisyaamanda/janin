@@ -9,6 +9,10 @@ class BerandaService {
     return data.snapshots();
   }
 
+  Stream<DocumentSnapshot<Object?>> streamUserByUID(String uid) {
+    return firestore.collection("users").doc(uid).snapshots();
+  }
+
   Future<DocumentSnapshot<Object?>> getByIDUsers(String id) async {
     DocumentReference docRef = firestore.collection("users").doc(id);
     return docRef.get();

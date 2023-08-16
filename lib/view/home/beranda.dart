@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:janin/models/produkmodel.dart';
 import 'package:janin/models/tipsmodel.dart';
+import 'package:janin/provider/auth.dart';
 import 'package:janin/services/berandaservices.dart';
 import 'package:janin/theme.dart';
 import 'package:janin/view/detail/detailtips.dart';
@@ -12,14 +13,19 @@ import 'package:janin/view/home/produk.dart';
 import 'package:janin/view/home/tips_beranda.dart';
 import 'package:janin/view/home/widget/produkcard.dart';
 import 'package:janin/view/home/widget/tipscard.dart';
+import 'package:provider/provider.dart';
 
 class Beranda extends StatelessWidget {
-  Beranda({super.key});
-
-  BerandaService berandaService = BerandaService();
+  // final String idDoc;
+  Beranda({
+    Key? key,
+    // required this.idDoc,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    Auth auth = Provider.of(context, listen:false);
+    BerandaService berandaService = BerandaService();
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -38,12 +44,12 @@ class Beranda extends StatelessWidget {
                 const SizedBox(
                   height: 5,
                 ),
-                StreamBuilder<QuerySnapshot<Object?>>(
-                  stream: berandaService.streamUsers(),
+                StreamBuilder<DocumentSnapshot<Object?>>(
+                  stream: berandaService.streamUserByUID(auth.id),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.active) {
-                      var data = snapshot.data!.docs;
-                      final dataUsers = data[0].data() as Map<String, dynamic>;
+                      var data = snapshot.data!;
+                      final dataUsers = data.data() as Map<String, dynamic>;
                       return Text(dataUsers['namaController']);
                     } else {
                       return Text('Gagal');

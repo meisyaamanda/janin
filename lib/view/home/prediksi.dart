@@ -27,7 +27,7 @@ class _PrediksiFormState extends State<PrediksiForm> {
 
   Future<void> predictJanin() async {
     final url =
-        'http://192.168.1.12:5000/predict'; // Ganti dengan alamat Flask server
+        'http://153.92.4.162:5001/predict'; // Ganti dengan alamat Flask server
     final headers = {'Content-Type': 'application/json'};
     final data = {
       'accelerations': accelerationsController.text,
@@ -49,18 +49,14 @@ class _PrediksiFormState extends State<PrediksiForm> {
     if (response.statusCode == 200) {
       PrediksiProvider prediksiProvider =
           Provider.of<PrediksiProvider>(context, listen: false);
-          
+
       final responseData = jsonDecode(response.body);
       setState(() {
         prediksiProvider.setResult(
-          responseData['result'] == 1
-              ? 'Janin anda dalam keadaan normal \n\v'
-                  'Status Kesehatan : Normal'
-              : 'Pasien harus segera istirahat\n\v'
-                  'Status Kesehatan : Kurang Baik',
+          responseData['result'] == 1 ? 'normal' : 'kurang baik',
         );
         // firestore
-        FirebaseFirestore.instance.collection('hasil_prediksi').add({
+        FirebaseFirestore.instance.collection("hasil_prediksi").add({
           'result': prediksiProvider.result,
           'timestamp': FieldValue.serverTimestamp(),
         });
@@ -252,7 +248,7 @@ class _PrediksiFormState extends State<PrediksiForm> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                hintText: 'Jumlah penurunan singkat denyut jantung rahim',
+                hintText: 'Masukkan nilai light',
                 hintStyle: greyTextStyle.copyWith(fontSize: 14),
               ),
             ),
@@ -294,7 +290,7 @@ class _PrediksiFormState extends State<PrediksiForm> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 hintText:
-                    'Jumlah penurunan yang signifikan dalam denyut jantung rahim',
+                    'Masukkan nilai severe',
                 hintStyle: greyTextStyle.copyWith(fontSize: 14),
               ),
             ),
@@ -336,7 +332,7 @@ class _PrediksiFormState extends State<PrediksiForm> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 hintText:
-                    'Jumlah penurunan yang lebih lama dalam denyut jantung janin',
+                    'Masukkan nilai prolongued',
                 hintStyle: greyTextStyle.copyWith(fontSize: 14),
               ),
             ),
@@ -378,7 +374,7 @@ class _PrediksiFormState extends State<PrediksiForm> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 hintText:
-                    'Persentase waktu dalam interval antara denyut jantung',
+                    'Masukkan nilai abnormal',
                 hintStyle: greyTextStyle.copyWith(fontSize: 14),
               ),
             ),
@@ -419,7 +415,7 @@ class _PrediksiFormState extends State<PrediksiForm> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                hintText: 'Persentasi waktu dalam jangka panjang',
+                hintText: 'Masukkan nilai percentage',
                 hintStyle: greyTextStyle.copyWith(fontSize: 14),
               ),
             ),
@@ -438,39 +434,40 @@ class _PrediksiFormState extends State<PrediksiForm> {
                   onPressed: () {
                     predictJanin();
                     showDialog(
-                        context: context,
-                        builder: (context) {
-                          final prediksiProvider =
-                              Provider.of<PrediksiProvider>(context,
-                                  listen: false);
-                          return AlertDialog(
-                            title: Text('Hasil Prediksi'),
-                            content: Text(
-                              prediksiProvider.result,
-                            ),
-                            actions: [
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: pinkColor,
-                                ),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Navbar(),
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  'Baik',
-                                  style: TextStyle(
-                                    color: blackColor,
+                      context: context,
+                      builder: (context) {
+                        final prediksiProvider = Provider.of<PrediksiProvider>(
+                            context,
+                            listen: false);
+                        return AlertDialog(
+                          title: Text('Hasil Prediksi'),
+                          content: Text(
+                            "Janin anda dalam keadaan ${prediksiProvider.result} \n \v Status kesehatan: ${prediksiProvider.result}",
+                          ),
+                          actions: [
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: pinkColor,
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Navbar(),
                                   ),
+                                );
+                              },
+                              child: Text(
+                                'Baik',
+                                style: TextStyle(
+                                  color: blackColor,
                                 ),
                               ),
-                            ],
-                          );
-                        });
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
                   child: Text(
                     'Prediksi',

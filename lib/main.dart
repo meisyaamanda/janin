@@ -5,6 +5,7 @@ import 'package:janin/provider/iconkatasandi.dart';
 import 'package:janin/provider/navbarprovider.dart';
 import 'package:janin/provider/prediksi.dart';
 import 'package:janin/view/signin/wrapper.dart';
+import 'package:janin/view/splashscreen.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -36,7 +37,7 @@ class MyApp extends StatelessWidget {
       ],
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: Wrapper(),
+        home: Splash(),
       ),
     );
   }
