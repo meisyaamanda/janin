@@ -19,23 +19,23 @@ class _SplashState extends State<Splash> {
   void initState() {
     super.initState();
     splashStart();
-    getId();
+    // getId();
   }
 
-  void getId() async {
-    final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-    SharedPreferences pref = await _prefs;
-    final id = await pref.getString(
-      "uid",
-    );
-    print(id);
-    Auth auth = Provider.of<Auth>(context, listen: false);
-    auth.id = id!;
-    print(auth.id);
-  }
+  // void getId() async {
+  //   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  //   SharedPreferences pref = await _prefs;
+  //   final id = await pref.getString(
+  //     "uid",
+  //   );
+  //   print(id);
+  //   Auth auth = Provider.of<Auth>(context, listen: false);
+  //   auth.id = id!;
+  //   print(auth.id);
+  // }
 
   splashStart() async {
-    var duration = const Duration(seconds: 3);
+    var duration = const Duration(seconds: 2);
     return Timer(
       duration,
       () {

@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth with ChangeNotifier {
   String id = "";
+  String nama= "";
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore db = FirebaseFirestore.instance;
 
@@ -45,14 +46,14 @@ class Auth with ChangeNotifier {
         password: password,
       );
       id = user.user!.uid;
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString("uid", id);
-      final result = await prefs.getString("uid");
-      print('hasil: $result');
+      pageRoute(id);
+      print(id);
+      // final result = await prefs.getString("uid");
+      // print('hasil: $result');
 
       // final SharedPreferences prefs = await _prefs;
       // await prefs.setString("uid",id);
-      print("jalan");
+      // print("jalan");
       if (user.user!.emailVerified) {
         Navigator.pushReplacement(
           context,
@@ -114,6 +115,8 @@ class Auth with ChangeNotifier {
 
   void logOut(context) async {
     await auth.signOut();
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.clear();
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -146,5 +149,10 @@ class Auth with ChangeNotifier {
     };
     db.collection("users").doc(user!.uid).update(userData);
     showTextMessage(context, 'Akun berhasil diupdate');
+  }
+
+  void pageRoute(String id) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    await pref.setString("uid", id);
   }
 }

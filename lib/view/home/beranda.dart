@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart';
 import 'package:janin/models/produkmodel.dart';
 import 'package:janin/models/tipsmodel.dart';
 import 'package:janin/provider/auth.dart';
@@ -14,17 +15,38 @@ import 'package:janin/view/home/tips_beranda.dart';
 import 'package:janin/view/home/widget/produkcard.dart';
 import 'package:janin/view/home/widget/tipscard.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class Beranda extends StatelessWidget {
-  // final String idDoc;
+class Beranda extends StatefulWidget {
   Beranda({
     Key? key,
     // required this.idDoc,
   }) : super(key: key);
 
   @override
+  State<Beranda> createState() => _BerandaState();
+}
+
+class _BerandaState extends State<Beranda> {
+  String? id = "";
+
+  @override
+  void initState() {
+    super.initState();
+    getCred();
+  }
+
+  void getCred() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    // Auth auth = Provider.of<Auth>(context, listen: false);
+    setState(() {
+      id = pref.getString("uid");
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Auth auth = Provider.of(context, listen:false);
+    Auth auth = Provider.of(context, listen: false);
     BerandaService berandaService = BerandaService();
     return Scaffold(
       body: SafeArea(
@@ -45,14 +67,21 @@ class Beranda extends StatelessWidget {
                   height: 5,
                 ),
                 StreamBuilder<DocumentSnapshot<Object?>>(
-                  stream: berandaService.streamUserByUID(auth.id),
+                  stream: berandaService
+                      .streamUserByUID(id!), // Use auth.id instead of id
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.active) {
-                      var data = snapshot.data!;
-                      final dataUsers = data.data() as Map<String, dynamic>;
-                      return Text(dataUsers['namaController']);
+                      if (snapshot.hasData && snapshot.data!.exists) {
+                        var dataUsers =
+                            snapshot.data!.data() as Map<String, dynamic>;
+                        String namaController = dataUsers['namaController'] ??
+                            'Nama Pengguna Tidak Ditemukan';
+                        return Text(namaController);
+                      } else {
+                        return Text('Data pengguna tidak ditemukan');
+                      }
                     } else {
-                      return Text('Gagal');
+                      return CircularProgressIndicator();
                     }
                   },
                 ),
