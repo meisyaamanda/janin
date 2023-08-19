@@ -196,32 +196,32 @@ class _SignInState extends State<SignIn> {
                 ),
               ),
               //Google
-              Center(
-                child: FloatingActionButton.extended(
-                  onPressed: () async {
-                    await auth.signInWithGoogle();
-                    if (mounted) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Navbar(),
-                        ),
-                      );
-                    }
-                  },
-                  icon: Image.asset(
-                    'assets/image/google.png',
-                    height: 24,
-                    width: 24,
-                  ),
-                  label: Text(
-                    'Masuk Dengan Google',
-                    style: GoogleFonts.poppins(fontSize: 12),
-                  ),
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black,
-                ),
-              ),
+              // Center(
+              //   child: FloatingActionButton.extended(
+              //     onPressed: () async {
+              //       await auth.signInWithGoogle();
+              //       if (mounted) {
+              //         Navigator.push(
+              //           context,
+              //           MaterialPageRoute(
+              //             builder: (context) => Navbar(),
+              //           ),
+              //         );
+              //       }
+              //     },
+              //     icon: Image.asset(
+              //       'assets/image/google.png',
+              //       height: 24,
+              //       width: 24,
+              //     ),
+              //     label: Text(
+              //       'Masuk Dengan Google',
+              //       style: GoogleFonts.poppins(fontSize: 12),
+              //     ),
+              //     backgroundColor: Colors.white,
+              //     foregroundColor: Colors.black,
+              //   ),
+              // ),
               const SizedBox(
                 height: 10,
               ),

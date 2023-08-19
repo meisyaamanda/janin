@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:janin/provider/auth.dart';
 import 'package:janin/provider/prediksi.dart';
 import 'package:janin/view/home/navbar.dart';
 import 'package:provider/provider.dart';
@@ -49,14 +50,17 @@ class _PrediksiFormState extends State<PrediksiForm> {
     if (response.statusCode == 200) {
       PrediksiProvider prediksiProvider =
           Provider.of<PrediksiProvider>(context, listen: false);
+      Auth auth = Provider.of<Auth>(context, listen: false);
 
       final responseData = jsonDecode(response.body);
       setState(() {
         prediksiProvider.setResult(
           responseData['result'] == 1 ? 'normal' : 'kurang baik',
         );
+
         // firestore
         FirebaseFirestore.instance.collection("hasil_prediksi").add({
+          'id':auth.id,
           'result': prediksiProvider.result,
           'timestamp': FieldValue.serverTimestamp(),
         });

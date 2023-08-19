@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:janin/provider/auth.dart';
 import 'package:janin/provider/prediksi.dart';
 import 'package:janin/services/prediksiservices.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +14,7 @@ class Riwayat extends StatelessWidget {
     PrediksiProvider prediksiProvider =
         Provider.of<PrediksiProvider>(context, listen: false);
     PrediksiService prediksiService = PrediksiService();
+    Auth auth = Provider.of<Auth>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -27,7 +29,7 @@ class Riwayat extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: StreamBuilder(
-            stream: prediksiService.streamPrediksi(),
+            stream: prediksiService.streamPrediksiByUserId(auth.id),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.active) {
                 var data = snapshot.data!.docs;

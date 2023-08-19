@@ -7,6 +7,7 @@ import 'package:janin/theme.dart';
 import 'package:janin/view/profil/editprofil.dart';
 import 'package:janin/view/profil/tentang.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Profil extends StatefulWidget {
   const Profil({super.key});
@@ -16,6 +17,21 @@ class Profil extends StatefulWidget {
 }
 
 class _ProfilState extends State<Profil> {
+  String? id = "";
+  @override
+  void initState() {
+    super.initState();
+    getCred();
+  }
+
+  void getCred() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    // Auth auth = Provider.of<Auth>(context, listen: false);
+    setState(() {
+      id = pref.getString("uid");
+    });
+  }
+
   BerandaService berandaService = BerandaService();
   @override
   Widget build(BuildContext context) {
@@ -39,117 +55,167 @@ class _ProfilState extends State<Profil> {
             const SizedBox(
               height: 20,
             ),
-            StreamBuilder<QuerySnapshot<Object?>>(
-              stream: berandaService.streamUsers(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.active){
-                  var data = snapshot.data!.docs;
-                  final dataUsers = data[0].data() as Map<String, dynamic>;
-                  return Center(
-                  child: Container(
-                    width: 200,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: NetworkImage(dataUsers['image'],),
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                  ),
-                );
-                } else {
-                  return Center(
-                  child: Container(
-                    width: 200,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: NetworkImage(
-                            "https://assets.pikiran-rakyat.com/crop/0x0:0x0/x/photo/2022/04/16/2717764595.jpeg"),
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                  ),
-                );
-                }
-              }
-            ),
+            FutureBuilder<void>(
+                future: Future.delayed(Duration(milliseconds: 1)),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator(); // Show loading indicator during delay
+                  } else if (snapshot.connectionState == ConnectionState.done) {
+                    return StreamBuilder<DocumentSnapshot<Object?>>(
+                      stream: berandaService.streamUserByUID(
+                          id!), // Ganti dengan metode yang benar
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.active) {
+                          if (snapshot.hasData && snapshot.data!.exists) {
+                            var dataUsers =
+                                snapshot.data!.data() as Map<String, dynamic>;
+                            final imageUrl = dataUsers['image'] as String?;
+                            return Center(
+                              child: Container(
+                                width: 200,
+                                height: 200,
+                                decoration: BoxDecoration(
+                                  border: Border.all(),
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    image: NetworkImage(imageUrl ??
+                                        "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.flaticon.com%2Ffree-icon%2Fperson_2815428&psig=AOvVaw1e-b3qtOkgeGh5i5T4Cn3V&ust=1692548372281000&source=images&cd=vfe&opi=89978449&ved=0CBAQjRxqFwoTCIja1JaQ6YADFQAAAAAdAAAAABAE"),
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                              ),
+                            );
+                          } else {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                        } else {
+                          return CircularProgressIndicator();
+                        }
+                      },
+                    );
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                }),
             const SizedBox(
               height: 10,
             ),
-            StreamBuilder<QuerySnapshot<Object?>>(
-              stream: berandaService.streamUsers(),
+            FutureBuilder<void>(
+              future: Future.delayed(Duration(milliseconds: 1)),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.active) {
-                  var data = snapshot.data!.docs;
-                  final dataUsers = data[0].data() as Map<String, dynamic>;
-                  return Text(dataUsers['namaController']);
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator(); // Show loading indicator during delay
+                } else if (snapshot.connectionState == ConnectionState.done) {
+                  return StreamBuilder<DocumentSnapshot<Object?>>(
+                    stream: berandaService.streamUserByUID(id!),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.active) {
+                        if (snapshot.hasData && snapshot.data!.exists) {
+                          var dataUsers =
+                              snapshot.data!.data() as Map<String, dynamic>;
+                          String namaController = dataUsers['namaController'] ??
+                              'Nama Pengguna Tidak Ditemukan';
+                          return Text(namaController);
+                        } else {
+                          return Text('Data pengguna tidak ditemukan');
+                        }
+                      } else {
+                        return CircularProgressIndicator();
+                      }
+                    },
+                  );
                 } else {
-                  return Text('Gagal');
+                  return Text('Terjadi kesalahan');
                 }
               },
             ),
             const SizedBox(
               height: 20,
             ),
-            StreamBuilder<QuerySnapshot<Object?>>(
-                stream: berandaService.streamUsers(),
+            FutureBuilder<void>(
+                future: Future.delayed(Duration(milliseconds: 1)),
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.active) {
-                    var data = snapshot.data!.docs;
-                    final dataUsers = data[0].data() as Map<String, dynamic>;
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EditProfil(
-                              email: dataUsers['emailController'],
-                              nama: dataUsers['namaController'],
-                              no: dataUsers['noController'],
-                              image: dataUsers['image'],
-                            ),
-                          ),
-                        );
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator(); // Show loading indicator during delay
+                  } else if (snapshot.connectionState == ConnectionState.done) {
+                    return StreamBuilder<DocumentSnapshot<Object?>>(
+                      stream: berandaService.streamUserByUID(
+                          id!), // Ganti dengan metode yang sesuai
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.active) {
+                          if (snapshot.hasData && snapshot.data!.exists) {
+                            var dataUsers =
+                                snapshot.data!.data() as Map<String, dynamic>;
+
+                            return InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => EditProfil(
+                                      email: dataUsers['emailController'],
+                                      nama: dataUsers['namaController'],
+                                      no: dataUsers['noController'],
+                                      image: dataUsers['image'],
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                height: 44,
+                                width: 325,
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: blackColor),
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.white,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Icon(
+                                        Icons.person,
+                                        color: pinkColor,
+                                      ),
+                                      // const SizedBox(
+                                      //   width: 30,
+                                      // ),
+                                      Text(
+                                        'Edit Profile',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 14,
+                                          color: blackColor,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 150,
+                                      ),
+                                      Icon(
+                                        Icons.arrow_forward_ios,
+                                        color: Colors.black,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          } else {
+                            return Text('Data not found');
+                          }
+                        } else {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
                       },
-                      child: Container(
-                        height: 44,
-                        width: 325,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: blackColor),
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.white,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Icon(
-                                Icons.person,
-                                color: pinkColor,
-                              ),
-                              // const SizedBox(
-                              //   width: 30,
-                              // ),
-                              Text(
-                                'Edit Profile',
-                                style: GoogleFonts.poppins(
-                                    fontSize: 14, color: blackColor),
-                              ),
-                              const SizedBox(
-                                width: 150,
-                              ),
-                              Icon(
-                                Icons.arrow_forward_ios,
-                                color: Colors.black,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
                     );
                   } else {
                     return Center(

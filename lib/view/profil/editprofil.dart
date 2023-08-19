@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:janin/provider/auth.dart';
+import 'package:janin/view/profil/profil.dart';
 import 'package:provider/provider.dart';
 import '../../theme.dart';
 
@@ -139,9 +140,9 @@ class _EditProfilState extends State<EditProfil> {
                             width: 200,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
+                              border: Border.all(),
                               image: DecorationImage(
-                                image: NetworkImage(
-                                    "https://assets.pikiran-rakyat.com/crop/0x0:0x0/x/photo/2022/04/16/2717764595.jpeg"),
+                                image: AssetImage("assets/image/person.png"),
                                 fit: BoxFit.fill,
                               ),
                             ),
@@ -259,7 +260,12 @@ class _EditProfilState extends State<EditProfil> {
                           downloadUrl,
                           context,
                         );
-                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Profil(),
+                          ),
+                        );
                       },
                       child: Text(
                         'Simpan',

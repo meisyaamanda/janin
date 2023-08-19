@@ -19,7 +19,7 @@ class _NavbarState extends State<Navbar> {
   Beranda(),
   Tips(),
   Riwayat(),
-  const Profil(),
+  Profil(),
   ];
 
   @override

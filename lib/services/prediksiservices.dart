@@ -25,4 +25,11 @@ class PrediksiService {
     DocumentReference docRef = firestore.collection("hasil_prediksi").doc(id);
     return docRef.get();
   }
+
+  Stream<QuerySnapshot> streamPrediksiByUserId(String id) {
+    return firestore
+        .collection("hasil_prediksi") // Replace with your collection name
+        .where('id', isEqualTo: id) // Replace with your field name
+        .snapshots();
+  }
 }

@@ -56,35 +56,35 @@ class _SignUpState extends State<SignUp> {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Center(
-                  child: FloatingActionButton.extended(
-                    onPressed: () async {
-                      await auth.signInWithGoogle();
-                      if (mounted) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Navbar(),
-                          ),
-                        );
-                      }
-                    },
-                    icon: Image.asset(
-                      'assets/image/google.png',
-                      height: 24,
-                      width: 24,
-                    ),
-                    label: Text(
-                      'Masuk Dengan Google',
-                      style: GoogleFonts.poppins(fontSize: 12),
-                    ),
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black,
-                  ),
-                ),
+                // const SizedBox(
+                //   height: 20,
+                // ),
+                // Center(
+                //   child: FloatingActionButton.extended(
+                //     onPressed: () async {
+                //       await auth.signInWithGoogle();
+                //       if (mounted) {
+                //         Navigator.push(
+                //           context,
+                //           MaterialPageRoute(
+                //             builder: (context) => Navbar(),
+                //           ),
+                //         );
+                //       }
+                //     },
+                //     icon: Image.asset(
+                //       'assets/image/google.png',
+                //       height: 24,
+                //       width: 24,
+                //     ),
+                //     label: Text(
+                //       'Masuk Dengan Google',
+                //       style: GoogleFonts.poppins(fontSize: 12),
+                //     ),
+                //     backgroundColor: Colors.white,
+                //     foregroundColor: Colors.black,
+                //   ),
+                // ),
                 const SizedBox(
                   height: 40,
                 ),
@@ -94,7 +94,7 @@ class _SignUpState extends State<SignUp> {
                       child: Divider(),
                     ),
                     Text(
-                      'atau',
+                      'daftar',
                       style: GoogleFonts.poppins(
                         color: Colors.grey,
                         fontSize: 14,
@@ -210,14 +210,14 @@ class _SignUpState extends State<SignUp> {
                       Consumer<IconKataSandi>(
                         builder: (context, data, _) {
                           return TextFormField(
-                            textInputAction: TextInputAction.done,
                             controller: passwordController,
+                            textInputAction: TextInputAction.done,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(20),
-                                borderSide: BorderSide(),
                               ),
                               hintText: 'Masukkan Kata Sandi',
+                              hintStyle: greyTextStyle.copyWith(fontSize: 14),
                               suffixIcon: IconButton(
                                 onPressed: () {
                                   data.changeVisible(data.isvisible);
@@ -229,10 +229,10 @@ class _SignUpState extends State<SignUp> {
                                 ),
                               ),
                             ),
-                            obscureText: true,
+                            obscureText: !data.isvisible,
                             validator: (value) {
                               if (value!.isEmpty) {
-                                return 'Kata Sandi tidak boleh kosong';
+                                return 'Password tidak boleh kosong';
                               }
                               return null;
                             },
@@ -261,7 +261,7 @@ class _SignUpState extends State<SignUp> {
                         backgroundColor: pinkColor,
                       ),
                       onPressed: () async {
-                        if (_formKey.currentState!.validate());
+                        if (_formKey.currentState!.validate()) ;
                         auth.SignUpProvider(
                           emailController.text,
                           passwordController.text,

@@ -2,16 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:janin/view/home/beranda.dart';
 import 'package:janin/view/home/navbar.dart';
-import 'package:janin/view/profil/profil.dart';
 import 'package:janin/view/signin/signin.dart';
 import 'package:janin/view/signin/snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth with ChangeNotifier {
   String id = "";
-  String nama= "";
+
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore db = FirebaseFirestore.instance;
 
@@ -85,8 +83,13 @@ class Auth with ChangeNotifier {
       await user.user!.sendEmailVerification();
       showTextMessage(
           context, 'Mohon cek email anda \n \v Akun berhasil dibuat');
-      postDetailsToFirestore(email, nama, no, context);
-      Navigator.pop(context);
+      postDetailsToFirestore(id,email, nama, no, context);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SignIn(),
+        ),
+      );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         showTextMessage(context, 'Kata sandi terlalu lemah');
@@ -126,15 +129,16 @@ class Auth with ChangeNotifier {
     notifyListeners();
   }
 
-  postDetailsToFirestore(String email, String nama, String no, context) {
+  postDetailsToFirestore(String id, String email, String nama, String no, context) {
     User? user = FirebaseAuth.instance.currentUser;
     FirebaseFirestore db = FirebaseFirestore.instance;
     final userData = <String, dynamic>{
+      "id":user!.uid,
       "namaController": nama,
       "emailController": email,
       "noController": no,
     };
-    db.collection("users").doc(user!.uid).set(userData);
+    db.collection("users").doc(user.uid).set(userData);
   }
 
   updateDetailsToFirestore(

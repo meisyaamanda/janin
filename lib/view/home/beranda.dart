@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart';
 import 'package:janin/models/produkmodel.dart';
 import 'package:janin/models/tipsmodel.dart';
 import 'package:janin/provider/auth.dart';
@@ -18,6 +18,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Beranda extends StatefulWidget {
+  // final String idDoc;
   Beranda({
     Key? key,
     // required this.idDoc,
@@ -66,22 +67,37 @@ class _BerandaState extends State<Beranda> {
                 const SizedBox(
                   height: 5,
                 ),
-                StreamBuilder<DocumentSnapshot<Object?>>(
-                  stream: berandaService
-                      .streamUserByUID(id!), // Use auth.id instead of id
+                FutureBuilder<void>(
+                  future: Future.delayed(
+                      Duration(milliseconds: 1)), // Delay for 2 seconds
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.active) {
-                      if (snapshot.hasData && snapshot.data!.exists) {
-                        var dataUsers =
-                            snapshot.data!.data() as Map<String, dynamic>;
-                        String namaController = dataUsers['namaController'] ??
-                            'Nama Pengguna Tidak Ditemukan';
-                        return Text(namaController);
-                      } else {
-                        return Text('Data pengguna tidak ditemukan');
-                      }
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator(); // Show loading indicator during delay
+                    } else if (snapshot.connectionState ==
+                        ConnectionState.done) {
+                      return StreamBuilder<
+                          DocumentSnapshot<Object?>>(
+                        stream: berandaService.streamUserByUID(id!),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.active) {
+                            if (snapshot.hasData && snapshot.data!.exists) {
+                              var dataUsers =
+                                  snapshot.data!.data() as Map<String, dynamic>;
+                              String namaController =
+                                  dataUsers['namaController'] ??
+                                      'Nama Pengguna Tidak Ditemukan';
+                              return Text(namaController);
+                            } else {
+                              return Text('Data pengguna tidak ditemukan');
+                            }
+                          } else {
+                            return CircularProgressIndicator();
+                          }
+                        },
+                      );
                     } else {
-                      return CircularProgressIndicator();
+                      return Text('Terjadi kesalahan');
                     }
                   },
                 ),
@@ -101,7 +117,7 @@ class _BerandaState extends State<Beranda> {
                         Padding(
                           padding: const EdgeInsets.all(10),
                           child: Text(
-                            'Untuk mengetahui kondisi janin anda dapat mengisi form dengan klik button form prediksi',
+                            'Untuk mengetahui kondisi janin anda dapat mengisi form dengan klik button prediksi janin',
                             style: GoogleFonts.poppins(
                               color: pinkColor,
                               fontSize: 14,
@@ -128,7 +144,7 @@ class _BerandaState extends State<Beranda> {
                               ),
                             );
                           },
-                          child: Text('Form Prediksi'),
+                          child: Text('Prediksi Janin'),
                         ),
                       ],
                     ),
