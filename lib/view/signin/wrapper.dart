@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:janin/view/home/navbar.dart';
-import 'package:janin/view/profil/profil.dart';
 import 'package:janin/view/signin/signin.dart';
 import 'package:provider/provider.dart';
 import 'package:janin/provider/auth.dart';

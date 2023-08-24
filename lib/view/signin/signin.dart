@@ -3,8 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:janin/provider/auth.dart';
 import 'package:janin/provider/iconkatasandi.dart';
 import 'package:janin/theme.dart';
-import 'package:janin/view/home/navbar.dart';
-import 'package:janin/view/profil/profil.dart';
 import 'package:janin/view/signin/lupasandi.dart';
 import 'package:janin/view/signup.dart';
 import 'package:provider/provider.dart';
@@ -77,7 +75,7 @@ class _SignInState extends State<SignIn> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Email / Nomor HP',
+                      'Email',
                       style: labelText,
                     ),
                     const SizedBox(
@@ -91,7 +89,7 @@ class _SignInState extends State<SignIn> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        hintText: 'Masukkan Email / Nomor HP',
+                        hintText: 'Masukkan Email',
                         hintStyle: greyTextStyle.copyWith(fontSize: 14),
                       ),
                       validator: (value) {

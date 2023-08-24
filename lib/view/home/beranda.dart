@@ -69,10 +69,10 @@ class _BerandaState extends State<Beranda> {
                 ),
                 FutureBuilder<void>(
                   future: Future.delayed(
-                      Duration(milliseconds: 1)), // Delay for 2 seconds
+                      Duration(milliseconds: 1)), 
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator(); // Show loading indicator during delay
+                      return CircularProgressIndicator(); 
                     } else if (snapshot.connectionState ==
                         ConnectionState.done) {
                       return StreamBuilder<
